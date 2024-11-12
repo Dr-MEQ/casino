@@ -3,20 +3,34 @@ import sys
 from typing import List
 import tkinter as tk
 from PIL import Image, ImageTk  # For handling the image
+from display import Display
 
-class TitleScreen(tk.Frame):
-    def __init__(self, master):
-        super().__init__(master)
-        self.master = master
-                
-        # Load and display background image
+class TitleScreen:
+    def __init__(self, display):
+        self.display = display
+        self.window = display.window
+        self.canvas = display.canvas  # Use Display's canvas
+        self.width = display.width
+        self.height = display.height
+        self.prompt_objects = []
+        self.prompt_visible = True
+
+         # Load background image
         self.bg_image = Image.open("casino_opening_screen.png")
-        # Get image dimensions
-        width = self.bg_image.width
-        height = self.bg_image.height
+        self.bg_photo = ImageTk.PhotoImage(self.bg_image)
+       
+        self.setup_title_screen()
+
+    def setup_title_screen(self):
         
+        # Clear any existing content
+        self.canvas.delete("all")
+
+        # Add background
+        self.canvas.create_image(0, 0, image=self.bg_photo, anchor="nw")
+
         # Set window size to match image
-        self.master.geometry(f"{width}x{height}")
+        self.master.geometry(f"{self.width}x{self.height}")
         self.bg_photo = ImageTk.PhotoImage(self.bg_image)
         
         # Configure the frame to expand
@@ -59,6 +73,8 @@ class TitleScreen(tk.Frame):
         
         # Store all the text objects (shadows and main text)
         self.prompt_objects = []
+
+        self.pack()
         
         # Create shadow layers
         offsets = [(2,2), (2,-2), (-2,2), (-2,-2)]
@@ -85,6 +101,7 @@ class TitleScreen(tk.Frame):
         
         # Bind keyboard event and set focus
         self.canvas.bind('<Key>', self.on_keypress)
+        self.canvas.bind('<Button>', self.on_keypress)      # Any mouse button
         self.canvas.focus_set()
         
         # Start the flashing animation
@@ -100,17 +117,9 @@ class TitleScreen(tk.Frame):
     
     def on_keypress(self, event):
         self.destroy()
-        MainGameScreen(self.master)
+        return
 
-        self.pack()
-        
-    def on_keypress(self, event):
-        # Switch to the main game screen
-        self.destroy()
-        MainGameScreen(self.master) 
-        
     
-
     def destroy_screen(self):
         self.destroy()
-        # You might want to start the game here
+        return
