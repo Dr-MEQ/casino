@@ -1,13 +1,17 @@
 import tkinter as tk
 from PIL import Image, ImageTk  # For handling graphics
 from tkinter import font  # For custom fonts if needed
-from casino_lobby import CasinoLobby  # For the transition to lobby
+from screens.casino_lobby import CasinoLobby
 
 class CasinoEntrance(tk.Frame):
-    def __init__(self, master, app_state):
+    def __init__(self, master, game_state):
         super().__init__(master)
         self.master = master
-        self.app_state = app_state
+        self.game_state = game_state
+
+        #what does game_state look like at this point?
+        print(self.game_state)
+
         self.load_graphics()  # Load background first
         self.setup_ui()      # Then add UI elements on top
         self.pack()
@@ -40,7 +44,11 @@ class CasinoEntrance(tk.Frame):
         
     def enter_casino(self):
         self.destroy()  # Clear entrance screen
-        CasinoLobby(self.master, self.app_state)  # Transition to lobby
+        self.game_state['current_screen'] = 'casino_lobby'
+        
+        # Transition to casino lobby
+        CasinoLobby(self.master, self.game_state)  # Transition to lobby
     
     def exit_casino(self):
-        self.master.destroy()
+        self.master.destroy()  # Close the window
+        self.game_state['current_screen'] = 'exit'
